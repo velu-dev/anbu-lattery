@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -6,19 +7,45 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  userValue: any;
   rawValue = ""
   totalSplit: any;
   twoSplitValue: any = [];
   threeSplitValue: any = [];
   resultValue: any = [];
-  constructor() {
+  constructor(private fb: FormBuilder) {
+    this.inputForm = this.fb.group({
+      inputValue: this.fb.array([this.fb.group({ input: '' })])
+    })
   }
+  inputForm: any = FormGroup;
+  get inputData() {
+    return this.inputForm.get('inputValue') as FormArray;
+  }
+  addSellingPoint() {
+    this.inputData.push(this.fb.group({ input: '' }));
+  }
+  deleteSellingPoint(index: any) {
+    this.inputData.removeAt(index);
+  }
+  finalResult:any = []
   getResult() {
-    this.analyseData(this.userValue)
+    this.finalResult = [];
+    // console.log("dfasdasd", this.inputForm.value)
+    let i: any = 0;
+
+    this.inputForm.get("inputValue").value.map((res: any) => {
+      let result = this.analyseData(res.input);
+      this.finalResult.push(result);
+      this.resultValue = [];
+      this.threeSplitValue = [];
+      this.twoSplitValue = [];
+      this.totalSplit = [];
+      this.rawValue = "";
+      i = i + 1;
+    })
+    console.log(this.finalResult)
   }
   analyseData(data: any) {
-    console.log(data)
     this.rawValue = data;
     this.totalSplit = this.rawValue.split(" ");
     this.totalSplit.map((res: any) => {
@@ -79,7 +106,6 @@ export class AppComponent {
                   index = index + 1
                 })
               } else {
-                console.log(this.twoSplitValue, filterValue1)
                 if (!this.twoSplitValue.includes(filterValue1)) {
                   this.twoSplitValue.push(filterValue1);
                   countArray.push(totalVal);
@@ -92,5 +118,6 @@ export class AppComponent {
         i = i + 1;
       })
     })
+    return this.resultValue;
   }
 }

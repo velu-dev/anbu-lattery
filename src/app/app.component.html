@@ -1,63 +1,59 @@
 <div class="container">
   <div class="row">
-    <div class="col-4">
-      <form (ngSubmit)="getResult()">
-        <div class="form-group">
-          <label for="exampleFormControlTextarea1">Enter your numbers</label>
-          <textarea class="form-control" name="userValue" [(ngModel)]="userValue" id="exampleFormControlTextarea1"
-            rows="3"></textarea>
+    <div class="col-2">
+      <form [formGroup]="inputForm">
+        <div formArrayName="inputValue">
+          <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex">
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Enter your numbers</label>
+              <textarea class="form-control" name="userValue" formControlName="input" id="exampleFormControlTextarea1"
+                rows="3"></textarea>
+            </div>
+            <button type="button" class="btn btn-danger" (click)="deleteSellingPoint(pointIndex)">Delete Input</button>
+          </div>
         </div>
-        <button type="submit" class="btn btn-success ">Get Result</button>
       </form>
-      <br>
-      <button type="button" class="btn btn-info ">Add Input</button>
+      <br> <button type="button" class="btn btn-info" (click)="addSellingPoint()">Add Input</button>
+      <button type="submit" class="btn btn-success " (click)="getResult()">Get Result</button>
+
+
     </div>
-    <div class="col-8">
-      <div class="card" *ngFor="let result of resultValue;let i=index">
-        <div class="card-content">
-          <div class="card-body cleartfix">
-            <div class="media align-items-stretch">
-              <div class="align-self-center">
-                <h1 class="mr-2">{{result?.filterKey}}</h1>
-              </div>
-              <div class="media-body">
-                <h5 class="card-title">Count: {{result?.count}}</h5>
-                <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p>
+    <div class="col-10">
+      <div class="card" *ngFor="let finalresult of finalResult">
+        <div class="container">
+          <input type="text">
+          <div class="row">
+            <div class="col-3" *ngFor="let result of finalresult;let i=index">
+              <div class="card-content">
+                <div class="card-body cleartfix">
+                  <div class="card">
+                    <h5 class="card-title text-info">{{result?.filterKey}} Count: {{result?.count}}</h5>
+                    <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- <div class="card-header">
-          {{result?.filterKey}}
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Count: {{result?.count}}</h5>
-          <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p>
-        </div> -->
       </div>
-      <!-- <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Filter Key</th>
-            <th scope="col">Count</th>
-            <th scope="col">Values</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let result of resultValue;let i=index">
-      <th scope="row">{{i+1}}</th>
-      <td>{{result?.filterKey}}</td>
-      <td>{{result?.count}}</td>
-      <td>
-        <span *ngFor="let value of result?.totalValue">
-          <h6>{{value}}</h6>
-        </span>
-      </td>
-      </tr>
-
-      </tbody>
-      </table> -->
     </div>
   </div>
 </div>
+<!-- 
+<form [formGroup]="inputForm">
+
+  <h2>Selling Points</h2>
+
+  <div formArrayName="selling_points">
+    <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex">
+    <label>
+      Selling Point: <input formControlName="input" />
+    </label>
+    <button type="button" (click)="deleteSellingPoint(pointIndex)">Delete Selling Point</button>
+    </div>
+    <button type="button" (click)="addSellingPoint()">Add Selling Point</button>
+  </div>
+
+</form>
+
+ -->

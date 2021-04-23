@@ -1,28 +1,31 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <form [formGroup]="inputForm">
-        <div formArrayName="inputValue">
-          <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex">
-            <div class="container">
-              <div class="row">
-                <div class="form-group col-3">
-                  <label for="exampleFormControlTextarea1">Enter your numbers</label>
-                  <textarea class="form-control" name="userValue" formControlName="input"
-                    id="exampleFormControlTextarea1" rows="3"></textarea>
-                </div>
-                <div class="col-9">
-                  <div class="card">
-                    <div class="container">
-                      <input type="text">
-                      <div class="row">
-                        <div class="col-3">
-                          <div class="card-content" *ngFor="let result of finalResult[pointIndex];let i=index">
-                            <span *ngIf="result?.count !=1">
-                              <h5 class="card-title text-info">{{result?.filterKey}} Count:
-                                {{result?.count}}</h5>
-                              <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p>
-                            </span>
+      <div class="main">
+        <form [formGroup]="inputForm">
+          <div formArrayName="inputValue">
+            <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex">
+              <div class="container">
+                <div class="row">
+                  <div class="form-group mt-2 custom-add col-3">
+                    <label for="exampleFormControlTextarea1">Enter your numbers <span
+                        (click)="deleteSellingPoint(pointIndex)"><i class="fa fa-close"></i></span></label>
+                    <textarea class="form-control" name="userValue" formControlName="input"
+                      id="exampleFormControlTextarea1" rows="3"></textarea>
+                  </div>
+                  <div class="col-9">
+                    <div class="card">
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-3">
+                            <div class="card-content" *ngFor="let result of finalResult[pointIndex];let i=index">
+                              <span *ngIf="result?.count !=1">
+                                <h5 class="card-title text-info">{{result?.filterKey}} Count:
+                                  {{result?.count}}</h5>
+                                <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span>
+                                </p>
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -39,42 +42,5 @@
         <button type="submit" class="btn btn-success ml-3" (click)="getResult()">Get Result</button>
       </div>
     </div>
-    <!-- <div class="col-10">
-      <div class="card" *ngFor="let finalresult of finalResult">
-        <div class="container">
-          <input type="text">
-          <div class="row">
-            <div class="col-3" *ngFor="let result of finalresult;let i=index">
-              <div class="card-content">
-                <div class="card-body cleartfix">
-                  <div class="card">
-                    <h5 class="card-title text-info">{{result?.filterKey}} Count: {{result?.count}}</h5>
-                    <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </div>
-<!-- 
-<form [formGroup]="inputForm">
-
-  <h2>Selling Points</h2>
-
-  <div formArrayName="selling_points">
-    <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex">
-    <label>
-      Selling Point: <input formControlName="input" />
-    </label>
-    <button type="button" (click)="deleteSellingPoint(pointIndex)">Delete Selling Point</button>
-    </div>
-    <button type="button" (click)="addSellingPoint()">Add Selling Point</button>
-  </div>
-
-</form>
-
- -->

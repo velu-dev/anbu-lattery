@@ -27,15 +27,35 @@ export class AppComponent {
   deleteSellingPoint(index: any) {
     this.inputData.removeAt(index);
   }
-  finalResult:any = []
+  finalResult: any = []
   getResult() {
     this.finalResult = [];
     // console.log("dfasdasd", this.inputForm.value)
     let i: any = 0;
 
     this.inputForm.get("inputValue").value.map((res: any) => {
+      this.finalResult.push({ two_digit: [], three_digit: [], top_five: [] });
       let result = this.analyseData(res.input);
-      this.finalResult.push(result);
+      // this.finalResult = result;
+      console.log(this.finalResult)
+      result.map((rr: any) => {
+        if (rr.filterKey.length != 1) {
+          if (rr.filterKey.length == 2) {
+            this.finalResult[i]['two_digit'].push(rr)
+          }
+          if (rr.filterKey.length == 3) {
+            this.finalResult[i]['three_digit'].push(rr)
+          }
+        }
+      })
+      let data = result;
+      let j = 0;
+      data.map((dd :any) => {
+        console.log(Math.max.apply(Math, result.map(function(o: any) { return o; })))
+        this.finalResult[i]['top_five'].push(Math.max.apply(Math, data.map(function(o: any) { return o.count; })));
+        data.splice(j, 1);
+        j = j + 1;
+      })
       this.resultValue = [];
       this.threeSplitValue = [];
       this.twoSplitValue = [];
@@ -44,6 +64,7 @@ export class AppComponent {
       i = i + 1;
     })
     console.log(this.finalResult)
+
   }
   analyseData(data: any) {
     this.rawValue = data;

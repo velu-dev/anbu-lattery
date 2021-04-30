@@ -1,68 +1,125 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <form [formGroup]="inputForm">
-        <div formArrayName="inputValue">
-          <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex"
-            class="main mt-3">
-            <div class="container">
-              <div class="row">
-                <div class="col-3 pl-0 pr-0">
-                  <div class="form-group custom-add ">
-                    <label for="exampleFormControlTextarea1">Enter your numbers <span
-                        (click)="deleteSellingPoint(pointIndex)"><i class="fa fa-close"></i></span></label>
-                    <textarea class="form-control" name="userValue" formControlName="input"
-                      id="exampleFormControlTextarea1" rows="3"></textarea>
-                  </div>
-                </div>
-                <div class="col-9">
-                  <div class="inner-container">
-                    <div class="info" *ngIf="!finalResult[pointIndex]">
-                      <div> No Result Found!!!</div>
-                      <div> Please Enter your numbers and click Get Result</div>
+      <div class="col-md-12 bg-light text-right">
+        <button class="btn btn-success" (click)="exportAsPDF('divId')">Copy as PDF</button>
+      </div>
+      <div id="divId">
+        <form [formGroup]="inputForm">
+          <div formArrayName="inputValue">
+            <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex"
+              class="main mt-3">
+              <div class="container">
+                <div class="row">
+                  <div class="col-3 pl-0 pr-0">
+                    <div class="form-group custom-add ">
+                      <label for="exampleFormControlTextarea1">Enter your numbers <span
+                          (click)="deleteSellingPoint(pointIndex)"><i class="fa fa-close"></i></span></label>
+                      <textarea class="form-control" name="userValue" formControlName="input"
+                        id="exampleFormControlTextarea1" rows="3"></textarea>
                     </div>
-                    <!-- <p>{{finalResult | json}}</p> -->
-                    <div class="container">
-                      <div class="row" *ngIf="finalResult[pointIndex]">
-                        <h5 class="card-title main-card-title"><span class="text-success">Two Digit</span></h5>
-                        <div class="col-3" *ngFor="let result of finalResult[pointIndex]['two_digit'];let i=index">
-                          <span>
-                            <div class="card">
-                              <span *ngIf="result?.count !=1">
-                                <h5 class="card-title"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.count}}
-                                </h5>
-                                <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
+                  </div>
+                  <div class="col-9">
+                    <div class="inner-container">
+                      <div class="info" *ngIf="!finalResult[pointIndex]">
+                        <div> No Result Found!!!</div>
+                        <div> Please Enter your numbers and click Get Result</div>
+                      </div>
+                      <!-- <p>{{finalResult | json}}</p> -->
+
+                      <div class="container" *ngIf="finalResult[pointIndex]">
+                        <div class="row custom-scroll">
+                          <div class="col-6">
+                            <h5 class="card-title main-card-title"><span class="text-success">Two Digit</span></h5>
+                            <div *ngFor="let result of finalResult[pointIndex]['two_digit'];let i=index">
+                              <span>
+                                <!-- <div class="card"> -->
+                                <span *ngIf="result?.count !=1">
+                                  <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.count}}
+                                  </p>
+                                  <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
+                                </span>
+                                <!-- </div> -->
                               </span>
                             </div>
-                          </span>
-                        </div>
-                      </div>
-                      <div class="row" *ngIf="finalResult[pointIndex]">
-                        <div class="col-3">
-                          <h5 class="card-title main-card-title"><span class="text-success">Three Digit</span></h5>
-                          <span *ngFor="let result of finalResult[pointIndex]['three_digit'];let i=index">
-                            <div class="card">
+                          </div>
+                          <div class="col-6">
+                            <h5 class="card-title main-card-title"><span class="text-success">Three Digit</span></h5>
+                            <span *ngFor="let result of finalResult[pointIndex]['three_digit'];let i=index">
+                              <!-- <div class="card"> -->
                               <span *ngIf="result?.count !=1">
                                 <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.count}}
                                 </p>
                                 <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
                               </span>
-                            </div>
-                          </span>
+                              <!-- </div> -->
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
+            </div>
+          </div>
+        </form>
+        <div class="container">
+          <div class="row">
+            <div class="col-3 pl-0 pr-0">
+              <h3>Final Result</h3>
+            </div>
+            <div class="col-9">
+              <div class="inner-container">
+                <div class="info" *ngIf="!isGotFinalResult">
+                  <div> No Result Found!!!</div>
+                  <div> Please Enter your numbers and click Get Result</div>
+                </div>
+                <!-- <p>{{finalResult | json}}</p> -->
+
+                <div class="container" *ngIf="isGotFinalResult">
+                  <div class="row custom-scroll">
+                    <div class="col-6">
+                      <h5 class="card-title main-card-title"><span class="text-success">Two Digit</span></h5>
+                      <div *ngFor="let result of finalAllResult['two_digit'] | orderBy:order1 : true;let i=index">
+                        <span>
+                          <!-- <div class="card"> -->
+                          <span *ngIf="result?.total_count !=1">
+                            <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.total_count}}
+                            </p>
+                            <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
+                          </span>
+                          <!-- </div> -->
+                        </span>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <h5 class="card-title main-card-title"><span class="text-success">Three Digit</span></h5>
+                      <div *ngFor="let result of finalAllResult['three_digit'] | orderBy:order1 : true;let i=index">
+                        <!-- <div class="card"> -->
+                        <!-- <p>{{result | json}}</p> -->
+                        <span *ngIf="result?.total_count !=1">
+                          <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.total_count}}
+                          </p>
+                          <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
+                        </span>
+                        <!-- </div> -->
+                      </div>
+                      <!-- <p>{{finalAllResult['three_digit'] | json}}</p> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </form>
+      </div>
       <div class="text-center pb-3 pl-2 pt-3 mt-4">
         <button type="button" class="btn btn-info" (click)="addSellingPoint()">Add Input</button>
         <button type="submit" class="btn btn-success ml-3" (click)="getResult()">Get Result</button>
+        <button type="submit" class="btn btn-success ml-3" [disabled]="isClicked" (click)="getFinalResult()">Get
+          Consolidated Result</button>
       </div>
     </div>
   </div>

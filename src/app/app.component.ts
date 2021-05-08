@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import * as jspdf from 'jspdf';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { LotteryService } from './lottery.service';
 // import 'jspdf-autotable';
 @Component({
   selector: 'app-root',
@@ -10,18 +11,6 @@ import jsPDF from 'jspdf';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  header = [['ID', 'Name', 'Email', 'Profile']]
-
-tableData = [
-    [1, 'John', 'john@yahoo.com', 'HR'],
-    [2, 'Angel', 'angel@yahoo.com', 'Marketing'],
-    [3, 'Harry', 'harry@yahoo.com', 'Finance'],
-    [4, 'Anne', 'anne@yahoo.com', 'Sales'],
-    [5, 'Hardy', 'hardy@yahoo.com', 'IT'],
-    [6, 'Nikole', 'nikole@yahoo.com', 'Admin'],
-    [7, 'Sandra', 'Sandra@yahoo.com', 'Sales'],
-    [8, 'Lil', 'lil@yahoo.com', 'Sales']
-]
   order: string = 'count';
   order1: string = 'total_count';
   rawValue = ""
@@ -29,7 +18,7 @@ tableData = [
   twoSplitValue: any = [];
   threeSplitValue: any = [];
   resultValue: any = [];
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private lotteryService: LotteryService) {
     this.inputForm = this.fb.group({
       inputValue: this.fb.array([this.fb.group({ input: '' })])
     })
@@ -80,6 +69,7 @@ tableData = [
       i = i + 1;
     })
   }
+
   isClicked = false;
   isGotFinalResult: any = false;
   getFinalResult() {
@@ -94,11 +84,34 @@ tableData = [
     }, 500);
     // this.getResult();
   }
+  lastResult: any = { two_digit: [], three_digit: [], onethreeDigit: [] }
+  OneThreeArray: any = [{ data: "", count: 0 }];
+  dummyArray: any = []
   getVal() {
     this.isGotFinalResult = true;
     this.isClicked = false;
     let filterKey: any = [];
     let arraySet: any = 0
+    this.inputForm.get("inputValue").value.map((res: any) => {
+      console.log(res)
+      res.input.split(" ").map((input: any) => {
+        let val: any = "";
+        val = input.split("")[1] + input.split("")[3];
+        console.log(val)
+        if (this.dummyArray.includes(val)) {
+          let i = 0;
+          this.OneThreeArray.map((arr: any) => {
+            if (arr.data == val) {
+              this.OneThreeArray[i].count = this.OneThreeArray[i].count + 1;
+            }
+            i = i + 1;
+          })
+        } else {
+          this.OneThreeArray.push({ data: val, count: 1 });
+          this.dummyArray.push(val);
+        }
+      })
+    })
     this.finalResult.map((res: any) => {
       res.two_digit.map((two: any) => {
         if (filterKey.includes(two.filterKey)) {
@@ -132,8 +145,60 @@ tableData = [
       })
       arraySet = arraySet + 1;
     })
-    // this.finalAllResult.two_digit = this.finalAllResult['two_digit'].sort((a: any, b: any) => a.total_count - b.total_count);
-    // this.finalAllResult.three_digit = this.finalAllResult['three_digit'].sort((a: any, b: any) => a.total_count - b.total_count);
+    this.lastResult.onethreeDigit = this.OneThreeArray;
+    let count2Array: any = [];
+    let count3Array: any = [];
+    this.finalAllResult.two_digit.map((final: any) => {
+      if (count2Array.includes(final.total_count)) {
+        this.lastResult.two_digit.map((secondMap: any) => {
+          if (secondMap.count == final.total_count) {
+            let data: any = final.filterKey;
+            secondMap.data.push(data);
+            secondMap.data.sort(function (a: any, b: any) {
+              return a - b;
+            });
+          }
+        })
+      } else {
+        count2Array.push(final.total_count);
+        count2Array.sort(function (a: any, b: any) {
+          return a - b;
+        });
+        let data = [];
+        data.push(final.filterKey)
+        data.sort(function (a, b) {
+          return a - b;
+        });
+        this.lastResult.two_digit.push({ count: final.total_count, data: data })
+      }
+    })
+    this.finalAllResult.three_digit.map((final: any) => {
+      if (count3Array.includes(final.total_count)) {
+        this.lastResult.three_digit.map((secondMap: any) => {
+          if (secondMap.count == final.total_count) {
+            let data: any = final.filterKey;
+            secondMap.data.push(data);
+            secondMap.data.sort(function (a: any, b: any) {
+              return a - b;
+            });
+          }
+        })
+      } else {
+        count3Array.push(final.total_count);
+        count3Array.sort(function (a: any, b: any) {
+          return a - b;
+        });
+        let data = [];
+        data.push(final.filterKey)
+        data.sort(function (a, b) {
+          return a - b;
+        });
+        this.lastResult.three_digit.push({ count: final.total_count, data: data })
+      }
+    })
+
+    // this.lastResult.two_digit = this.lastResult['two_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
+    // this.lastResult.three_digit = this.lastResult['three_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
 
   }
   analyseData(data: any) {
@@ -212,40 +277,23 @@ tableData = [
     })
     return this.resultValue;
   }
-  exportAsPDF(divId: any)
-  {
-      let data: any = document.getElementById('divId');  
-      html2canvas(data).then(canvas => {
-      const contentDataURL = canvas.toDataURL('image/png') 
-      let pdf: any = new jsPDF('l', 'cm', 'a4'); //Generates PDF in landscape mode
-      // let pdf = new jspdf('p', 'cm', 'a4'); Generates PDF in portrait mode
-      pdf.addImage(contentDataURL, 'PNG', 0, 0, 29.7, 21.0);  
-      pdf.save('Filename.pdf');   
-    }); 
+  exportAsPDF(divId: any) {
+    console.log(this.finalResult, this.lastResult)
+    let data = [];
+    data.push(this.finalResult)
+    data.push(this.lastResult)
+    this.lotteryService.getPdf(data).subscribe(res => {
+      this.showPdf(res.pdf)
+    })
   }
-//   generatePdf() {
-//     var pdf = new jsPDF();
-
-//     pdf.setFontSize(2P);
-//     pdf.text('Angular PDF Table', 11, 8);
-//     pdf.setFontSize(12);
-//     pdf.setTextColor(99);
-
-
-//     (pdf as any).autoTable({
-//     head: this.header,
-//     body: this.tableData,
-//     theme: 'plain',
-//     didDrawCell: (data: any) => {
-//         console.log(data.column.index)
-//     }
-//     })
-
-//     // Open PDF document in browser's new tab
-//     pdf.output('dataurlnewwindow')
-
-//     // Download PDF doc  
-//     pdf.save('table.pdf');
-// }  
+  showPdf(base64: any) {
+    const linkSource = 'data:application/pdf;base64,' + base64;
+    const downloadLink = document.createElement("a");
+    let filename = "result" + new Date().toDateString();
+    const fileName = filename + ".pdf";
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.click();
+  }
 
 }

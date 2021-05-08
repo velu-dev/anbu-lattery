@@ -80,33 +80,65 @@
 
                 <div class="container" *ngIf="isGotFinalResult">
                   <div class="row custom-scroll">
-                    <div class="col-6">
+                    <div class="col-4">
                       <h5 class="card-title main-card-title"><span class="text-success">Two Digit</span></h5>
+                      <span *ngFor="let result of lastResult['two_digit']">
+                        <div class="card text-black mb-3">
+                          <div class="card-header">
+                            {{result?.count}}
+                          </div>
+                          <div class="card-body">
+                            <p class="card-text"><span *ngFor="let value of result?.data">{{value}} </span></p>
+                          </div>
+                        </div>
+                      </span>
+                      <!-- <h5 class="card-title main-card-title"><span class="text-success">Two Digit</span></h5>
                       <div *ngFor="let result of finalAllResult['two_digit'] | orderBy:order1 : true;let i=index">
                         <span>
-                          <!-- <div class="card"> -->
                           <span *ngIf="result?.total_count !=1">
                             <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.total_count}}
                             </p>
-                            <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
                           </span>
-                          <!-- </div> -->
                         </span>
-                      </div>
+                      </div> -->
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                       <h5 class="card-title main-card-title"><span class="text-success">Three Digit</span></h5>
-                      <div *ngFor="let result of finalAllResult['three_digit'] | orderBy:order1 : true;let i=index">
-                        <!-- <div class="card"> -->
-                        <!-- <p>{{result | json}}</p> -->
+                      <!-- <div *ngFor="let result of finalAllResult['three_digit'] | orderBy:order1 : true;let i=index">
                         <span *ngIf="result?.total_count !=1">
                           <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.total_count}}
                           </p>
-                          <!-- <p class="card-text"><span *ngFor="let value of result?.totalValue">{{value}} </span></p> -->
                         </span>
-                        <!-- </div> -->
-                      </div>
-                      <!-- <p>{{finalAllResult['three_digit'] | json}}</p> -->
+                    </div> -->
+                      <span *ngFor="let result of lastResult['three_digit']">
+                        <div class="card text-black mb-3">
+                          <div class="card-header">
+                            {{result?.count}}
+                          </div>
+                          <div class="card-body">
+                            <p class="card-text"><span *ngFor="let value of result?.data">{{value}} </span></p>
+                          </div>
+                        </div>
+                      </span>
+                    </div>
+                    <div class="col-4">
+                      <h5 class="card-title main-card-title"><span class="text-success">First Three Digit</span></h5>
+                      <!-- <div *ngFor="let result of finalAllResult['three_digit'] | orderBy:order1 : true;let i=index">
+                        <span *ngIf="result?.total_count !=1">
+                          <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;- {{result?.total_count}}
+                          </p>
+                        </span>
+                    </div> -->
+                      <span *ngFor="let result of lastResult['onethreeDigit']| orderBy: 'count' : true;">
+                        <div class="card text-black mb-3" *ngIf="result.count >1">
+                          <div class="card-header">
+                            {{result?.count}}
+                          </div>
+                          <div class="card-body">
+                            <p class="card-text"><span>{{result.data}} </span></p>
+                          </div>
+                        </div>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -114,13 +146,12 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="text-center pb-3 pl-2 pt-3 mt-4">
-        <button type="button" class="btn btn-info" (click)="addSellingPoint()">Add Input</button>
-        <button type="submit" class="btn btn-success ml-3" (click)="getResult()">Get Result</button>
-        <button type="submit" class="btn btn-success ml-3" [disabled]="isClicked" (click)="getFinalResult()">Get
-          Consolidated Result</button>
+        <div class="text-center pb-3 pl-2 pt-3 mt-4">
+          <button type="button" class="btn btn-info" (click)="addSellingPoint()">Add Input</button>
+          <button type="submit" class="btn btn-success ml-3" (click)="getResult()">Get Result</button>
+          <button type="submit" class="btn btn-success ml-3" [disabled]="isClicked" (click)="getFinalResult()">Get
+            Consolidated Result</button>
+        </div>
       </div>
     </div>
   </div>
-</div>

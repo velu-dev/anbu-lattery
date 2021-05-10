@@ -1,0 +1,36 @@
+<!--<ul class="list-group" *ngFor="let list of listData">
+    <li class="list-group-item" (click)="open(list)">{{list.name}}</li>
+</ul> -->
+<div class="col-md-12 bg-light text-right">
+    <button class="btn btn-success text-left" (click)="new()">Add</button>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Day</th>
+                        <th scope="col">Input Name</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let list of listData; let i= index">
+                        <th scope="row">{{i + 1}}</th>
+                        <td>{{list?.name}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" (click)="open(list)"><i
+                                    class="far fa-eye"></i></button>
+                            <button type="button" class="btn btn-success" (click)="edit(list)"><i
+                                    class="fas fa-edit"></i></button>
+                            <button type="button" class="btn btn-danger" (click)="delete(list)"><i
+                                    class="far fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

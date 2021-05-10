@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "lottery-7597f": {
+      "hosting": {
+        "lottery": [
+          "lottery-7597f"
+        ]
+      }
+    }
+  }
+}

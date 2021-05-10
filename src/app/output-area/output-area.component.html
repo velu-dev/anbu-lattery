@@ -1,0 +1,130 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="col-md-12 bg-light text-right">
+                <button class="btn btn-success" (click)="home()">Back to Home</button>&nbsp;
+                <button class="btn btn-warning" (click)="edit()">Edit</button> &nbsp;
+                <button class="btn btn-info" (click)="exportAsPDF('divId')">Copy as PDF</button>
+            </div>
+            <div *ngFor="let item of inputData; let pointIndex=index" class="main mt-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3 pl-0 pr-0">
+                            {{item.input}}
+                        </div>
+                        <div class="col-9">
+                            <div class="inner-container">
+                                <div class="info" *ngIf="!finalResult[pointIndex]">
+                                    <div> No Result Found!!!</div>
+                                    <div> Please Enter your numbers and click Get Result {{finalResult | json}}
+                                    </div>
+                                </div>
+
+                                <div class="container" *ngIf="finalResult[pointIndex]">
+                                    <div class="row custom-scroll">
+                                        <div class="col-6">
+                                            <h5 class="card-title main-card-title"><span class="text-success">Two
+                                                    Digit</span></h5>
+                                            <div
+                                                *ngFor="let result of finalResult[pointIndex]['two_digit'];let i=index">
+                                                <span>
+                                                    <span *ngIf="result?.count !=1">
+                                                        <p class="card-text">
+                                                            <span>{{result?.filterKey}}</span>&nbsp;-
+                                                            {{result?.count}}
+                                                        </p>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <h5 class="card-title main-card-title"><span class="text-success">Three
+                                                    Digit</span></h5>
+                                            <span
+                                                *ngFor="let result of finalResult[pointIndex]['three_digit'];let i=index">
+                                                <span *ngIf="result?.count !=1">
+                                                    <p class="card-text"><span>{{result?.filterKey}}</span>&nbsp;-
+                                                        {{result?.count}}
+                                                    </p>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- </div> -->
+            <!-- </form> -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-3 pl-0 pr-0">
+                        <h3>Final Result</h3>
+                    </div>
+                    <div class="col-9">
+                        <div class="inner-container">
+                            <div class="info" *ngIf="!isGotFinalResult">
+                                <div> No Result Found!!!</div>
+                                <div> Please Enter your numbers and click Get Result</div>
+                            </div>
+
+                            <div class="container" *ngIf="isGotFinalResult">
+                                <div class="row custom-scroll">
+                                    <div class="col-4">
+                                        <h5 class="card-title main-card-title"><span class="text-success">Two
+                                                Digit</span></h5>
+                                        <span *ngFor="let result of lastResult['two_digit']">
+                                            <div class="card text-black mb-3">
+                                                <div class="card-header">
+                                                    {{result?.count}}
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text"><span
+                                                            *ngFor="let value of result?.data">{{value}} </span></p>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </div>
+                                    <div class="col-4">
+                                        <h5 class="card-title main-card-title"><span class="text-success">First
+                                                Three Digit</span></h5>
+                                        <div class="card text-black mb-3" *ngFor="let title of dummyArrayTitle">
+                                            <div class="card-header">
+                                                {{title | uppercase}}
+                                            </div>
+                                            <div class="card-body">
+                                                <p class="card-text"
+                                                    *ngFor="let result of count_duplicate(dummyArray[title]) | orderBy: 'number' : false">
+                                                    <span *ngIf="result.count != 1">{{result?.number}}
+                                                        -
+                                                        {{result.count}}, </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <h5 class="card-title main-card-title"><span class="text-success">Three
+                                                Digit</span></h5>
+                                        <span *ngFor="let result of lastResult['three_digit']">
+                                            <div class="card text-black mb-3">
+                                                <div class="card-header">
+                                                    {{result?.count}}
+                                                </div>
+                                                <div class="card-body">
+                                                    <p class="card-text"><span
+                                                            *ngFor="let value of result?.data">{{value}} </span></p>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

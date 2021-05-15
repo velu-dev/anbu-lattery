@@ -19,11 +19,13 @@ export class OutputAreaComponent implements OnInit {
   resultValue: any = [];
   inputData: any = [];
   id: any = null;
+  input: any;
   constructor(private router: Router, private fb: FormBuilder, private lotteryService: LotteryService, private firebase: FirebaseService, private route: ActivatedRoute) {
     this.route.params.subscribe((res: any) => {
       if (res.id)
         this.id = res.id
       this.firebase.getInput(res.id).subscribe((input: any) => {
+        this.input = input;
         this.inputData = input.data;
         this.getResult();
         this.getFinalResult();
@@ -49,6 +51,7 @@ export class OutputAreaComponent implements OnInit {
     this.inputData.map((res: any) => {
       this.finalResult.push({ two_digit: [], three_digit: [], top_five: [] });
       let result = this.analyseData(res.input);
+      this.finalResult[i]['consolidate'] = result.firstThird
       result.map((rr: any) => {
         if (rr.filterKey.length != 1) {
           if (rr.filterKey.length == 2) {
@@ -101,9 +104,9 @@ export class OutputAreaComponent implements OnInit {
     }
     let data: any = []
     for (let prop in counts) {
-      if (counts[prop] > 1) {
-        data.push({ number: prop, count: counts[prop] })
-      }
+      // if (counts[prop] > 1) {
+      data.push({ number: prop, count: counts[prop] })
+      // }
     }
     return data;
   }
@@ -226,14 +229,103 @@ export class OutputAreaComponent implements OnInit {
         this.lastResult.three_digit.push({ count: final.total_count, data: data })
       }
     })
+    this.lastResult['consolidate'] = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
+    let dummy: any = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
+    let consolidated = this.finalResult.map((res: any) => res.consolidate);
+    this.dummyArrayTitle.map((title: any) => {
+      consolidated.map((cons: any) => {
+        cons.map((res: any) => {
+          if (title.toUpperCase() == res.name) {
+            // console.log(res)
+            res.data.map((num: any) => {
+              if (dummy[title].includes(num.number)) {
+                let i = 0;
+                this.lastResult['consolidate'][title].map((change: any) => {
+                  if(change.number == num.number){
+                    this.lastResult['consolidate'][title][i].count = 1 + this.lastResult['consolidate'][title][i].count;
+                  }
+                  i = i + 1
+                })
+              } else {
+                dummy[title].push(num.number)
+                this.lastResult['consolidate'][title].push({ number: num.number, count: 1 })
+              }
+            })
+          }
+        })
+      })
+    })
+    // this.finalResult.map((res: any) => {
+    //   res.consolidate.map((cons: any) => {
+    //     console.log(cons)
+    //     if (cons.name.toLowerCase() == "wx") {
+    //       if (dummy.wx.includes(cons.number)) {
+    //         let ind = 0;
+    //         this.lastResult['consolidate']["wx"].map((int: any) =>{
+    //           if(int.number == cons.number){
+    //             this.lastResult['consolidate']["wx"][ind].count = this.lastResult['consolidate']["wx"][ind].count + 1
+    //           }
+    //           ind = ind+1
+    //         })
+    //       } else {
+    //         this.lastResult['consolidate']["wx"].push({number: cons.number, count: 1})
+    //         dummy.wx.push(cons.number);
+    //       }
+    //     }
+    //     if (cons.name.toLowerCase() == "wy") {
 
-    // this.lastResult.two_digit = this.lastResult['two_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
-    // this.lastResult.three_digit = this.lastResult['three_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
+    //     }
+    //     if (cons.name.toLowerCase() == "wz") {
 
+    //     }
+    //     if (cons.name.toLowerCase() == "xy") {
+
+    //     }
+    //     if (cons.name.toLowerCase() == "xz") {
+
+    //     }
+    //     if (cons.name.toLowerCase() == "yz") {
+
+    //     }
+    //   })
+    // })
+    // console.log(this.lastResult['consolidate']["wx"])
   }
+  simpleDummy: any = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] };
   analyseData(data: any) {
+    this.simpleDummy = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] };
     this.rawValue = data;
     this.totalSplit = this.rawValue.split(" ");
+    this.totalSplit.map((input: any) => {
+      this.analysisArray.map((ii: any) => {
+        let val: any = "";
+        val = input.split("")[ii.data[0]] + input.split("")[ii.data[1]];
+        // if (this.simpleDummy[ii.name].includes(val)) {
+        //   console.log(val)
+        //   let i = 0;
+        //   this.resultValue['firstThird'].map((inp: any) => {
+        //     console.log(inp)
+        //     if (inp.name == ii.name) {
+        //       console.log(inp)
+        //       if (inp.number == val) {
+        //         console.log(inp)
+        //         this.resultValue['firstThird'][i].count = inp.count + 1
+        //       }
+        //     }
+        //     i = i +1;
+        //   })
+        // } else {
+        this.resultValue['firstThird'] = this.resultValue['firstThird'] ? this.resultValue['firstThird'] : [];
+        this.simpleDummy[ii.name].push(val);
+        // let data = [{ number: val, count: 1 }]
+        // this.resultValue['firstThird'].push({ name: ii.name, data: data })
+        // }
+      })
+    })
+    Object.keys(this.simpleDummy).map((res: any) => {
+      let data = this.count_duplicate(this.simpleDummy[res]);
+      this.resultValue['firstThird'].push({ name: res.toUpperCase(), data: data })
+    })
     this.totalSplit.map((res: any) => {
       let i = 1;
       let singleSplit = res.split("");
@@ -312,7 +404,7 @@ export class OutputAreaComponent implements OnInit {
       let result: any;
       result = this.count_duplicate(this.dummyArray[res]);
       console.log(res, result)
-      FirstLast.push({name: res.toUpperCase(), data: result})
+      FirstLast.push({ name: res.toUpperCase(), data: result })
     })
     let data = [];
     data.push(this.finalResult)

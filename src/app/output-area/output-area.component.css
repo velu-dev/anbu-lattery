@@ -102,3 +102,12 @@
     height: 200px;
     overflow: auto;
 }
+.final-result{
+    height: 500px !important;
+}
+.final-result-container{
+    height: 500px;
+}
+.final-col,.final-scroll, .final-inner{
+    height: 500px;
+}

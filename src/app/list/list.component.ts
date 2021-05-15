@@ -12,6 +12,7 @@ export class ListComponent implements OnInit {
   constructor(private router: Router, private firebase: FirebaseService) {
     this.firebase.getInputs().subscribe((res: any) => {
       this.listData = res;
+      console.log(res)
     })
   }
 

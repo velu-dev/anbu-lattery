@@ -23,6 +23,7 @@ export class InputAreaComponent implements OnInit {
         this.isEdit = true;
         this.id = res.id;
         this.firebase.getInput(this.id).subscribe((res: any) => {
+          console.log(res)
           this.inputForm.patchValue({ name: res.name });
           res.data.map((item: any, i: any) => {
             this.addSellingPoint();
@@ -56,7 +57,8 @@ export class InputAreaComponent implements OnInit {
     let data = {
       id: this.id,
       name: this.inputForm.get('name').value,
-      data: this.inputForm.get("inputValue").value
+      data: this.inputForm.get("inputValue").value,
+      created_date: new Date().toDateString()
     }
     if (this.isEdit) {
       this.firebase.updateInput(data).then((res: any) => {

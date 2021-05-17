@@ -1,16 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import * as jspdf from 'jspdf';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { LotteryService } from './lottery.service';
-// import 'jspdf-autotable';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FirebaseService } from '../firebase.service';
+import { LotteryService } from '../lottery.service';
+
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-output-area',
+  templateUrl: './output-area.component.html',
+  styleUrls: ['./output-area.component.css']
 })
-export class AppComponent {
+export class OutputAreaComponent implements OnInit {
   order: string = 'count';
   order1: string = 'total_count';
   rawValue = ""
@@ -18,31 +17,49 @@ export class AppComponent {
   twoSplitValue: any = [];
   threeSplitValue: any = [];
   resultValue: any = [];
-  constructor(private fb: FormBuilder, private lotteryService: LotteryService) {
-    this.inputForm = this.fb.group({
-      inputValue: this.fb.array([this.fb.group({ input: '' })])
+  inputData: any = [];
+  id: any = null;
+  input: any;
+  constructor(private router: Router, private fb: FormBuilder, private lotteryService: LotteryService, private firebase: FirebaseService, private route: ActivatedRoute) {
+    this.route.params.subscribe((res: any) => {
+      if (res.id)
+        this.id = res.id
+      this.firebase.getInput(res.id).subscribe((input: any) => {
+        this.input = input;
+        this.inputData = input.data;
+        this.getResult();
+        this.getFinalResult();
+      })
     })
   }
-  inputForm: any = FormGroup;
-  get inputData() {
-    return this.inputForm.get('inputValue') as FormArray;
+
+  ngOnInit() {
+
   }
-  addSellingPoint() {
-    this.inputData.push(this.fb.group({ input: '' }));
+  edit() {
+    this.router.navigate(['/input', this.id])
   }
-  deleteSellingPoint(index: any) {
-    this.inputData.removeAt(index);
+  home() {
+    this.router.navigate(['/'])
   }
   finalResult: any = []
   finalAllResult: any = []
 
   getResult() {
     this.finalResult = [];
-    // console.log("dfasdasd", this.inputForm.value)
     let i: any = 0;
-    this.inputForm.get("inputValue").value.map((res: any) => {
+    this.inputData.map((res: any) => {
       this.finalResult.push({ two_digit: [], three_digit: [], top_five: [] });
       let result = this.analyseData(res.input);
+      result.firstThird.map((ii: any) =>{
+        ii.data.sort(function(a: any, b: any){
+          return a.number - b.number
+        })
+      })
+      // secondMap.data.sort(function (a: any, b: any) {
+      //   return a - b;
+      // });
+      this.finalResult[i]['consolidate'] = result.firstThird
       result.map((rr: any) => {
         if (rr.filterKey.length != 1) {
           if (rr.filterKey.length == 2) {
@@ -86,7 +103,6 @@ export class AppComponent {
   }
   count_duplicate(a: any) {
     let counts: any = {}
-    console.log(this.dummyArray)
     for (let i = 0; i < a.length; i++) {
       if (counts[a[i]]) {
         counts[a[i]] += 1
@@ -96,9 +112,8 @@ export class AppComponent {
     }
     let data: any = []
     for (let prop in counts) {
-      // if (counts[prop] >= 2) {
-
-        data.push({ number: prop, count: counts[prop] })
+      // if (counts[prop] > 1) {
+      data.push({ number: prop, count: counts[prop] })
       // }
     }
     return data;
@@ -107,15 +122,14 @@ export class AppComponent {
   OneThreeArray: any = [];
   addedArray: any = [];
   dummyArray: any = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] }
-  dummyArrayTitle: any = ["wz", "xz", "yz", "wx", "wy", "xy" ]
+  dummyArrayTitle: any = ["wx", "wy", "wz", "xy", "xz", "yz"]
   analysisArray = [{ name: "wx", data: [0, 1] }, { name: "wy", data: [0, 2] }, { name: "wz", data: [0, 3] }, { name: "xy", data: [1, 2] }, { name: "xz", data: [1, 3] }, { name: "yz", data: [2, 3] }]
   getVal() {
     this.isGotFinalResult = true;
     this.isClicked = false;
     let filterKey: any = [];
     let arraySet: any = 0
-    this.inputForm.get("inputValue").value.map((res: any) => {
-      console.log(res)
+    this.inputData.map((res: any) => {
       res.input.split(" ").map((input: any) => {
         this.analysisArray.map((ii: any) => {
           let val: any = "";
@@ -223,15 +237,50 @@ export class AppComponent {
         this.lastResult.three_digit.push({ count: final.total_count, data: data })
       }
     })
-
-    // this.lastResult.two_digit = this.lastResult['two_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
-    // this.lastResult.three_digit = this.lastResult['three_digit'].map((res: any)=> res.data.sort((a: any, b: any) => a - b));
-
+    this.lastResult['consolidate'] = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
+    let dummy: any = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
+    let consolidated = this.finalResult.map((res: any) => res.consolidate);
+    this.dummyArrayTitle.map((title: any) => {
+      consolidated.map((cons: any) => {
+        cons.map((res: any) => {
+          if (title.toUpperCase() == res.name) {
+            // console.log(res)
+            res.data.map((num: any) => {
+              if (dummy[title].includes(num.number)) {
+                let i = 0;
+                this.lastResult['consolidate'][title].map((change: any) => {
+                  if(change.number == num.number){
+                    this.lastResult['consolidate'][title][i].count = 1 + this.lastResult['consolidate'][title][i].count;
+                  }
+                  i = i + 1
+                })
+              } else {
+                dummy[title].push(num.number)
+                this.lastResult['consolidate'][title].push({ number: num.number, count: 1 })
+              }
+            })
+          }
+        })
+      })
+    })
   }
+  simpleDummy: any = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] };
   analyseData(data: any) {
-    console.log("i am called")
+    this.simpleDummy = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] };
     this.rawValue = data;
     this.totalSplit = this.rawValue.split(" ");
+    this.totalSplit.map((input: any) => {
+      this.analysisArray.map((ii: any) => {
+        let val: any = "";
+        val = input.split("")[ii.data[0]] + input.split("")[ii.data[1]];
+        this.resultValue['firstThird'] = this.resultValue['firstThird'] ? this.resultValue['firstThird'] : [];
+        this.simpleDummy[ii.name].push(val);
+      })
+    })
+    Object.keys(this.simpleDummy).map((res: any) => {
+      let data = this.count_duplicate(this.simpleDummy[res]);
+      this.resultValue['firstThird'].push({ name: res.toUpperCase(), data: data })
+    })
     this.totalSplit.map((res: any) => {
       let i = 1;
       let singleSplit = res.split("");
@@ -305,10 +354,18 @@ export class AppComponent {
     return this.resultValue;
   }
   exportAsPDF(divId: any) {
-    console.log(this.finalResult, this.lastResult)
+    let FirstLast: any = [];
+    this.dummyArrayTitle.map((res: any) => {
+      let result: any;
+      result = this.count_duplicate(this.dummyArray[res]);
+      console.log(res, result)
+      FirstLast.push({ name: res.toUpperCase(), data: result })
+    })
     let data = [];
     data.push(this.finalResult)
     data.push(this.lastResult)
+    data.push(FirstLast)
+    console.log(data)
     this.lotteryService.getPdf(data).subscribe(res => {
       this.showPdf(res.pdf)
     })

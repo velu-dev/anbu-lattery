@@ -1,18 +1,40 @@
-<h1>Edit Product</h1>
-
-<form [formGroup]="productForm">
-
-  <h2>Selling Points</h2>
-
-  <div formArrayName="selling_points">
-    <div *ngFor="let item of sellingPoints.controls; let pointIndex=index" [formGroupName]="pointIndex">
-    <label>
-      Selling Point: <input formControlName="point" />
-    </label>
-    <button type="button" (click)="deleteSellingPoint(pointIndex)">Delete Selling Point</button>
+<div class="col-md-12 bg-light text-right">
+    <button class="btn btn-success text-left" (click)="home()">back To Home</button>
+</div>
+<form [formGroup]="inputForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-8 pl-0 pr-0">
+                <div class="form-group custom-add ">
+                    <label for="name">Name</label>
+                    <input name="name" class="form-control" required formControlName="name" />
+                </div>
+            </div>
+        </div>
     </div>
-    <button type="button" (click)="addSellingPoint()">Add Selling Point</button>
-  </div>
-
+    <div formArrayName="inputValue">
+        <div *ngFor="let item of inputData.controls; let pointIndex=index" [formGroupName]="pointIndex"
+            class="main mt-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 pl-0 pr-0">
+                        <div class="form-group custom-add ">
+                            <label for="exampleFormControlTextarea1">Enter your numbers <span
+                                    (click)="deleteSellingPoint(pointIndex)"><i class="fa fa-close"></i></span></label>
+                            <textarea class="form-control" name="userValue" formControlName="input"
+                                id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-2 pl-0 pr-0">'
+                        <button class="btn btn-danger" (click)="deleteSellingPoint(pointIndex)">X</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
-{{ productForm.value | json }}
+<div class="text-center pb-3 pl-2 pt-3 mt-4 footer">
+    <button type="button" class="btn btn-info" (click)="addSellingPoint()">Add Input</button>
+    <button type="submit" class="btn btn-success ml-3" *ngIf="!isEdit" (click)="getResult()">Get Result</button>
+    <button type="submit" class="btn btn-success ml-3" *ngIf="isEdit" (click)="getResult()">Update Result</button>
+</div>

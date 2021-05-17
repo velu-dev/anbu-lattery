@@ -12,8 +12,8 @@
             </div>
             <div *ngFor="let item of inputData; let pointIndex=index" class="main mt-3">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-3 pl-0 pr-0">
+                    <div class="row ">
+                        <div class="col-3 pl-0 pr-0 custom-scroll">
                             {{item.input}}
                         </div>
                         <div class="col-9">
@@ -30,7 +30,7 @@
                                             <h5 class="card-title main-card-title"><span class="text-success">Two
                                                     Digit</span></h5>
                                             <div class="card text-black mb-3">
-                                                <p class="card-text">
+                                                <p class="card-text .card-text-two">
                                                     <span
                                                         *ngFor="let result of finalResult[pointIndex]['two_digit'];let i=index">
                                                         <span *ngIf="result.count > 1">
@@ -52,7 +52,7 @@
                                                 <div class="card-body">
                                                     <p class="card-text">
                                                         <span
-                                                            *ngFor="let result of res.data | orderBy: 'number' : false">{{result?.number}}
+                                                            *ngFor="let result of res.data | orderBy: 'count' : false">{{result?.number}}
                                                             -
                                                             {{result.count}}, </span>
                                                     </p>
@@ -107,7 +107,7 @@
                                                     {{result?.count}}
                                                 </div>
                                                 <div class="card-body">
-                                                    <p class="card-text"><span
+                                                    <p class="card-text card-text-two"><span
                                                             *ngFor="let value of result?.data">{{value}} </span></p>
                                                 </div>
                                             </div>
@@ -121,9 +121,8 @@
                                                 {{title | uppercase}}
                                             </div>
                                             <div class="card-body">
-                                                <p class="card-text"
-                                                    *ngFor="let result of  this.lastResult['consolidate'][title] | orderBy: 'number' : false">
-                                                    <span *ngIf="result.count != 1">{{result?.number}}
+                                                <p class="card-text">
+                                                    <span *ngFor="let result of  this.lastResult['consolidate'][title] | orderBy: 'count' : true">{{result?.number}}
                                                         -
                                                         {{result.count}}, </span>
                                                 </p>

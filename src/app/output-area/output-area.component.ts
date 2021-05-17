@@ -51,6 +51,14 @@ export class OutputAreaComponent implements OnInit {
     this.inputData.map((res: any) => {
       this.finalResult.push({ two_digit: [], three_digit: [], top_five: [] });
       let result = this.analyseData(res.input);
+      result.firstThird.map((ii: any) =>{
+        ii.data.sort(function(a: any, b: any){
+          return a.number - b.number
+        })
+      })
+      // secondMap.data.sort(function (a: any, b: any) {
+      //   return a - b;
+      // });
       this.finalResult[i]['consolidate'] = result.firstThird
       result.map((rr: any) => {
         if (rr.filterKey.length != 1) {
@@ -255,41 +263,6 @@ export class OutputAreaComponent implements OnInit {
         })
       })
     })
-    // this.finalResult.map((res: any) => {
-    //   res.consolidate.map((cons: any) => {
-    //     console.log(cons)
-    //     if (cons.name.toLowerCase() == "wx") {
-    //       if (dummy.wx.includes(cons.number)) {
-    //         let ind = 0;
-    //         this.lastResult['consolidate']["wx"].map((int: any) =>{
-    //           if(int.number == cons.number){
-    //             this.lastResult['consolidate']["wx"][ind].count = this.lastResult['consolidate']["wx"][ind].count + 1
-    //           }
-    //           ind = ind+1
-    //         })
-    //       } else {
-    //         this.lastResult['consolidate']["wx"].push({number: cons.number, count: 1})
-    //         dummy.wx.push(cons.number);
-    //       }
-    //     }
-    //     if (cons.name.toLowerCase() == "wy") {
-
-    //     }
-    //     if (cons.name.toLowerCase() == "wz") {
-
-    //     }
-    //     if (cons.name.toLowerCase() == "xy") {
-
-    //     }
-    //     if (cons.name.toLowerCase() == "xz") {
-
-    //     }
-    //     if (cons.name.toLowerCase() == "yz") {
-
-    //     }
-    //   })
-    // })
-    // console.log(this.lastResult['consolidate']["wx"])
   }
   simpleDummy: any = { wz: [], xz: [], yz: [], wx: [], wy: [], xy: [] };
   analyseData(data: any) {
@@ -300,26 +273,8 @@ export class OutputAreaComponent implements OnInit {
       this.analysisArray.map((ii: any) => {
         let val: any = "";
         val = input.split("")[ii.data[0]] + input.split("")[ii.data[1]];
-        // if (this.simpleDummy[ii.name].includes(val)) {
-        //   console.log(val)
-        //   let i = 0;
-        //   this.resultValue['firstThird'].map((inp: any) => {
-        //     console.log(inp)
-        //     if (inp.name == ii.name) {
-        //       console.log(inp)
-        //       if (inp.number == val) {
-        //         console.log(inp)
-        //         this.resultValue['firstThird'][i].count = inp.count + 1
-        //       }
-        //     }
-        //     i = i +1;
-        //   })
-        // } else {
         this.resultValue['firstThird'] = this.resultValue['firstThird'] ? this.resultValue['firstThird'] : [];
         this.simpleDummy[ii.name].push(val);
-        // let data = [{ number: val, count: 1 }]
-        // this.resultValue['firstThird'].push({ name: ii.name, data: data })
-        // }
       })
     })
     Object.keys(this.simpleDummy).map((res: any) => {

@@ -239,6 +239,7 @@ export class OutputAreaComponent implements OnInit {
     })
     this.lastResult['consolidate'] = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
     let dummy: any = { wx: [], wy: [], wz: [], xy: [], xz: [], yz: [] }
+    console.log(this.finalResult)
     let consolidated = this.finalResult.map((res: any) => res.consolidate);
     this.dummyArrayTitle.map((title: any) => {
       consolidated.map((cons: any) => {
@@ -246,17 +247,25 @@ export class OutputAreaComponent implements OnInit {
           if (title.toUpperCase() == res.name) {
             // console.log(res)
             res.data.map((num: any) => {
-              if (dummy[title].includes(num.number)) {
+              if (dummy[title].includes(num.count)) {
                 let i = 0;
                 this.lastResult['consolidate'][title].map((change: any) => {
-                  if(change.number == num.number){
-                    this.lastResult['consolidate'][title][i].count = 1 + this.lastResult['consolidate'][title][i].count;
+                  console.log(change)
+                  if(change.count == num.count){
+                    this.lastResult['consolidate'][title][i].number.push(num.number)
                   }
+                  // change.number.
+                  // if(change.count == num.count){
+                    // this.lastResult['consolidate'][title].number.push(change.number);
+                    console.log(this.lastResult['consolidate'][title][i])
+                  // }
                   i = i + 1
                 })
               } else {
-                dummy[title].push(num.number)
-                this.lastResult['consolidate'][title].push({ number: num.number, count: 1 })
+                dummy[title].push(num.count)
+                let dd = [];
+                dd.push(num.number)
+                this.lastResult['consolidate'][title].push({ number: dd, count: num.count })
               }
             })
           }

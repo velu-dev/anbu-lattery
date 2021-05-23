@@ -33,7 +33,7 @@
                                                 <p class="card-text .card-text-two">
                                                     <span
                                                         *ngFor="let result of finalResult[pointIndex]['two_digit'];let i=index">
-                                                        <span *ngIf="result.count > 1"  class="tw_in">
+                                                        <span *ngIf="result.count > 1" class="tw_in">
                                                             <span>{{result?.filterKey}}</span><span>-</span><span>{{result?.count}},</span>
                                                         </span>
                                                     </span>
@@ -50,11 +50,11 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <p class="card-text">
-                                                        <span
-                                                            *ngFor="let result of res.data | orderBy: 'count' : false" class="thr_in">
+                                                        <span *ngFor="let result of res.data | orderBy: 'count' : false"
+                                                            class="thr_in">
                                                             <span>{{result?.number}}</span><span>-</span><span>{{result.count}},</span>
-                                                             </span>
-                                                           
+                                                        </span>
+
                                                     </p>
                                                 </div>
                                             </div>
@@ -67,7 +67,8 @@
                                                     <span
                                                         *ngFor="let result of finalResult[pointIndex]['three_digit'];let i=index">
                                                         <span *ngIf="result.count > 1" class="l_thr_in">
-                                                            <span> {{result?.filterKey}}</span><span>-</span><span> {{result?.count}},</span>
+                                                            <span> {{result?.filterKey}}</span><span>-</span><span>
+                                                                {{result?.count}},</span>
                                                         </span>
                                                     </span>
                                                 </p>
@@ -120,11 +121,21 @@
                                                 {{title | uppercase}}
                                             </div>
                                             <div class="card-body">
-                                                <p class="card-text">
-                                                    <span *ngFor="let result of  this.lastResult['consolidate'][title] | orderBy: 'count' : true">{{result?.number}}
-                                                        -
-                                                        {{result.count}}, </span>
-                                                </p>
+                                                <div class="card text-black mb-3"
+                                                    *ngFor="let result of  this.lastResult['consolidate'][title] | orderBy: 'count' : true">
+                                                    <div class="card-header">
+                                                        {{result?.count}}
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <p class="card-text"><span
+                                                                *ngFor="let value of result?.number">{{value}} </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!-- <span
+                                                    *ngFor="let result of  this.lastResult['consolidate'][title] | orderBy: 'count' : true">{{result?.number}}
+                                                    -
+                                                    {{result.count}}, </span> -->
                                             </div>
                                         </div>
                                     </div>
